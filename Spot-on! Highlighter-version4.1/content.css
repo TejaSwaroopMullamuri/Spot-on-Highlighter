@@ -1,0 +1,18 @@
+#spot-on-highlight-element {
+  position: absolute;
+  pointer-events: none; /* Allows clicks to pass through to elements underneath */
+  z-index: 2147483647; /* Max z-index to try to be on top */
+  border-radius: 3px; /* Subtle rounding for softer edges */
+  border-width: 0; /* No border for a less boxy look */
+  border-style: solid; /* Kept for structure, but width is 0 */
+  box-shadow: none; /* No shadow for a flatter, more integrated highlight */
+  transition: background-color 0.15s ease-in-out, 
+              opacity 0.1s ease-in-out,
+              top 0.05s linear, 
+              left 0.05s linear,
+              width 0.05s linear,
+              height 0.05s linear;
+  display: none; /* Initially hidden */
+  box-sizing: border-box; 
+  opacity: 1; /* Div itself is opaque, background color provides translucency from hexToRgba */
+}

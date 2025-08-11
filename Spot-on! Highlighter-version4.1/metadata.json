@@ -1,0 +1,5 @@
+{
+  "name": "Spot On! Highlighter",
+  "description": "A React application that simulates a spotlight highlighting feature for web content. Users can toggle the spotlight and choose different highlight colors.",
+  "requestFramePermissions": []
+}

@@ -1,0 +1,25 @@
+
+{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "module": "ESNext",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "strict": true,
+    "noEmit": true, // Assuming you are using a bundler like esbuild or webpack
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "types": ["chrome", "react", "react-dom"],
+    "baseUrl": ".",
+    "paths": {
+      "*": ["node_modules/*", "src/types/*"]
+    }
+  },
+  "include": ["**/*.ts", "**/*.tsx", "index.tsx", "App.tsx", "components/Controls.tsx", "constants.ts", "utils/colorUtils.ts", "content.ts", "background.ts"],
+  "exclude": ["node_modules"]
+}
