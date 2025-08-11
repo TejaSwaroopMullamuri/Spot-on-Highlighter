@@ -13,6 +13,10 @@ if (!(window as any).spotOnHighlighterLoaded) {
   let highlightColor = FALLBACK_DEFAULT_HIGHLIGHT_COLOR;
   let currentHighlight: HTMLElement | null = null;
   let hoverTimer: number | null = null;
+  let scrollTimer: number | null = null;
+
+  // Track last mouse position for scroll handling
+  let lastMousePosition: { x: number; y: number } | null = null;
 
   // Create highlight overlay
   function createHighlight(element: HTMLElement) {
@@ -115,6 +119,12 @@ if (!(window as any).spotOnHighlighterLoaded) {
   function handleMouseMove(event: MouseEvent) {
     if (!isSpotlightOn) return;
     
+    // Skip if we're in a scroll throttle period
+    if (scrollTimer) return;
+    
+    // Track mouse position for scroll handling
+    lastMousePosition = { x: event.clientX, y: event.clientY };
+    
     // Get all elements at this point, starting with the most specific
     const elements = document.elementsFromPoint(event.clientX, event.clientY);
     let targetElement: Element | null = null;
@@ -173,27 +183,63 @@ if (!(window as any).spotOnHighlighterLoaded) {
 
   // Handle scroll/resize to update highlight position
   function handleScrollResize() {
-    if (currentHighlight) {
-      // For now, just remove highlight on scroll/resize
-      removeHighlight();
+    // Throttle scroll events to avoid excessive calls
+    if (scrollTimer) {
+      clearTimeout(scrollTimer);
     }
+    
+    // Remove highlight immediately for instant feedback
+    removeHighlight();
+    
+    // Small delay before allowing new highlights to prevent flickering
+    scrollTimer = window.setTimeout(() => {
+      scrollTimer = null;
+    }, 50);
   }
 
   // Add event listeners
   function addListeners() {
     document.addEventListener('mousemove', handleMouseMove, { passive: true });
     document.addEventListener('mouseleave', handleMouseLeave, { passive: true });
+    
+    // Listen for all possible scroll events
     window.addEventListener('scroll', handleScrollResize, { passive: true });
+    document.addEventListener('scroll', handleScrollResize, { passive: true });
+    document.body.addEventListener('scroll', handleScrollResize, { passive: true });
+    
+    // Also listen for wheel events (mouse wheel scrolling)
+    window.addEventListener('wheel', handleScrollResize, { passive: true });
+    document.addEventListener('wheel', handleScrollResize, { passive: true });
+    
+    // Listen for resize events
     window.addEventListener('resize', handleScrollResize, { passive: true });
+    
+    // Listen for touch events that might cause scrolling
+    document.addEventListener('touchmove', handleScrollResize, { passive: true });
   }
 
   // Remove event listeners
   function removeListeners() {
     document.removeEventListener('mousemove', handleMouseMove);
     document.removeEventListener('mouseleave', handleMouseLeave);
+    
+    // Remove all scroll event listeners
     window.removeEventListener('scroll', handleScrollResize);
+    document.removeEventListener('scroll', handleScrollResize);
+    document.body.removeEventListener('scroll', handleScrollResize);
+    
+    // Remove wheel event listeners
+    window.removeEventListener('wheel', handleScrollResize);
+    document.removeEventListener('wheel', handleScrollResize);
+    
+    // Remove resize event listener
     window.removeEventListener('resize', handleScrollResize);
+    
+    // Remove touch event listener
+    document.removeEventListener('touchmove', handleScrollResize);
+    
     removeHighlight();
+    lastMousePosition = null; // Clear mouse position tracking
   }
 
   // Initialize settings from storage
